@@ -5,6 +5,7 @@
 #include <map>
 
 #include "ws2812-rpi.h"
+#include "color.hpp"
 
 #define SOLDERED_OCTAVE 4
 
@@ -100,7 +101,8 @@ int main(void)
 
 
 	for (int i = 0; i < 88; i++) {
-		n->setPixelColor(keyToLED[i] , 0, 0, 0);
+		auto [r, g, b] = Color::HSVtoRBG(0, 0, 0);
+		n->setPixelColor(keyToLED[i] , r, g, b);
 	}
 
 	n->show();
