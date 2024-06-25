@@ -4,6 +4,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include <vector>
+
 class Network {
 public:
 	Network(int port);
@@ -12,7 +14,7 @@ public:
 	Network(const Network&) = delete;
 	Network& operator=(const Network&) = delete;
 	
-	char* receive();
+	std::vector<char> receive();
 private:
 	int m_port;
 	int m_fd;

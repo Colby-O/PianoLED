@@ -13,14 +13,14 @@ struct Color {
 			std::uint8_t b;
 		};
 		struct {
-			float h;
-			float s;
-			float v;
+			double h;
+			double s;
+			double v;
 		};
 	};
 
 	Color (std::int8_t r, std::uint8_t g, std::uint8_t b) : isRGB(true), r(r), g(g), b(b) {};
-	Color (bool, float h, float s, float v) : isRGB(false), h(h), s(s), v(v) {};
+	Color (bool, double h, double s, double v) : isRGB(false), h(h), s(s), v(v) {};
 	Color (std::uint8_t b) : Color(b, b, b) {};
 	Color(void) : Color(0) {};
 

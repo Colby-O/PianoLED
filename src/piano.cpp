@@ -1,14 +1,13 @@
 #include "piano.hpp"
 #include "color.hpp"
 #include "music.hpp"
-#include "utils.hpp"
+#include "time.hpp"
 #include "ws2812-rpi.h"
-
 
 Piano::Piano() : 
 	strip(new NeoPixel(288)), 
 	m_keyToLED(Music::generateKeyMap()),
-	m_effect(new DefaultEffect())
+	m_effect(new FadeOutEffect())
 {
 	strip->setBrightness(0.5);
 
@@ -29,7 +28,7 @@ Piano::~Piano() {}
 void Piano::updateKeyState(int key, int vel, bool isPressed) {
 	m_keys[key].hasChanged = isPressed != m_keys[key].isPressed;
 	m_keys[key].isPressed = isPressed;
-	m_keys[key].lastPressed = Utils::getTimeInMS();
+	m_keys[key].lastPressed = Time::getTimeMS();
 	m_keys[key].vel = vel;
 }
 

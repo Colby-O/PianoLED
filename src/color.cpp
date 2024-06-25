@@ -6,17 +6,17 @@
 Color& Color::HSV() {
 	if (!this->isRGB) return *this;
 
-	float nr = this->r / 255.0;
-	float ng = this->g / 255.0;
-	float nb = this->b / 255.0;
+	double nr = this->r / 255.0;
+	double ng = this->g / 255.0;
+	double nb = this->b / 255.0;
 
 	this->h = 0.0f;
 	this->s = 0.0f;
 	this->v = 0.0f;
 
-	float maxCh = std::max(nr, std::max(ng, nb));
-	float minCh = std::min(nr, std::min(ng, nb));
-	float range = maxCh - minCh;
+	double maxCh = std::max(nr, std::max(ng, nb));
+	double minCh = std::min(nr, std::min(ng, nb));
+	double range = maxCh - minCh;
 
 	// Brightness
 	this->v = maxCh;
@@ -46,12 +46,12 @@ Color& Color::RGB() {
 
 	if (this->isRGB) return *this;
 
-	float fR, fG, fB;
+	double fR, fG, fB;
 
-	float fC = this->v * this->s;
-	float fHPrime = std::fmod(this->h / 60.0, 6);
-	float fX = fC * (1 - std::fabs(std::fmod(fHPrime, 2) - 1));
-	float fM = this->v - fC;
+	double fC = this->v * this->s;
+	double fHPrime = std::fmod(this->h / 60.0, 6);
+	double fX = fC * (1 - std::fabs(std::fmod(fHPrime, 2) - 1));
+	double fM = this->v - fC;
 	
 	if(0 <= fHPrime && fHPrime < 1) {
 		fR = fC;

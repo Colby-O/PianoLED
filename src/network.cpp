@@ -8,16 +8,16 @@
 #include <iostream>
 
 static void setNonBlocking(int sockfd) {
-	int flags = fcntl(sockfd, F_GETFL, 0);
+	int flags = ::fcntl(sockfd, F_GETFL, 0);
 	if (flags == -1) {
-		perror("fcntl F_GETFL");
-		exit(EXIT_FAILURE);
+		std::perror("fcntl F_GETFL");
+		std::exit(EXIT_FAILURE);
 	}
 
 	flags |= O_NONBLOCK;
 	if (fcntl(sockfd, F_SETFL, flags) == -1) {
-		perror("fcntl F_SETFL");
-		exit(EXIT_FAILURE);
+		std::perror("fcntl F_SETFL");
+		std::exit(EXIT_FAILURE);
 	}
 }
 
@@ -34,7 +34,7 @@ Network::Network(int port) : m_port(port) {
 
 	m_addr = {0};
 	m_addr.sin_family = AF_INET;
-	m_addr.sin_addr.s_addr = ::htonl(INADDR_ANY);
+	m_addr.sin_addr.s_addr = INADDR_ANY;
 	m_addr.sin_port = ::htons(m_port);
 
 	::bind(m_fd, (struct sockaddr*) &m_addr, sizeof(m_addr));
@@ -44,29 +44,28 @@ Network::Network(int port) : m_port(port) {
 	reconnect();
 }
 
-char* Network::receive() {
-
+std::vector<char> Network::receive() {
 	if (m_read == 0 || m_read < m_data[0]) {
-		int read = ::read(m_conn, &m_data[m_read], sizeof(m_data));    
-		if (read < 0) return nullptr;
+		int read = ::read(m_conn, &m_data[m_read], sizeof(m_data));
+		if (read < 0) return {};
 		if (read == 0) {
 			reconnect();
-			return nullptr;
+			return {};
 		}
 		m_read += read;
 	}
 
-	if (m_read < m_data[0]) return nullptr;
+	if (m_read < m_data[0]) return {};
 	
 	int packetSize = m_data[0];
 
-	char* res = new char[3] {m_data[1], m_data[2], m_data[3]};
+	std::vector<char> res(&m_data[1], &m_data[packetSize]);
 
-	m_read -= packetSize;    
+	m_read -= packetSize;
 
 	for (int i = 0; i < m_read; i++) {
 		m_data[i] = m_data[i + packetSize];
 	}
-	
+
 	return res;
 }
