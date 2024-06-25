@@ -5,16 +5,47 @@
 #include <tuple>
 
 struct Color {
-	std::uint8_t r;
-	std::uint8_t g;
-	std::uint8_t b;
+	bool isRGB;
+	union {
+		struct {
+			std::uint8_t r;
+			std::uint8_t g;
+			std::uint8_t b;
+		};
+		struct {
+			float h;
+			float s;
+			float v;
+		};
+	};
 
-	Color (std::int8_t r, std::uint8_t g, std::uint8_t b) : r(r), g(g), b(b) {};
+	Color (std::int8_t r, std::uint8_t g, std::uint8_t b) : isRGB(true), r(r), g(g), b(b) {};
+	Color (bool, float h, float s, float v) : isRGB(false), h(h), s(s), v(v) {};
 	Color (std::uint8_t b) : Color(b, b, b) {};
 	Color(void) : Color(0) {};
 
-	static std::tuple<float, float, float> RBGtoHSV(Color col);
-	static Color HSVtoRBG(float h, float s, float v);
+	Color(const Color& col) {
+		this->isRGB = col.isRGB;
+
+		if (col.isRGB) {
+			this->r = col.r;
+			this->g = col.g;
+			this->b = col.b;
+		}
+		else {
+			this->h = col.h;
+			this->s = col.s;
+			this->v = col.v;
+		}
+	}
+
+	Color& HSV();
+	Color& RGB();
+
+	Color clone() const {
+		if (this->isRGB) return Color(r, g, b);
+		else return Color(true, h, s, v);
+	}
 };
 
 #endif

@@ -1,83 +1,97 @@
 #include "color.hpp"
 
+#include <cmath>
 #include <algorithm>
 
-std::tuple<float, float, float> Color::RBGtoHSV(Color col) {
-	float nr = col.r / 255.0;
-	float ng = col.g / 255.0;
-	float nb = col.b / 255.0;
+Color& Color::HSV() {
+	if (!this->isRGB) return *this;
 
-	float h = 0.0f;
-	float s = 0.0f;
-	float v = 0.0f;
+	float nr = this->r / 255.0;
+	float ng = this->g / 255.0;
+	float nb = this->b / 255.0;
+
+	this->h = 0.0f;
+	this->s = 0.0f;
+	this->v = 0.0f;
 
 	float maxCh = std::max(nr, std::max(ng, nb));
 	float minCh = std::min(nr, std::min(ng, nb));
 	float range = maxCh - minCh;
 
 	// Brightness
-	v = maxCh;
+	this->v = maxCh;
 
 	// Saturate 
-	if (maxCh != 0) s = range / maxCh;
-	else return std::make_tuple(-1, 0, maxCh);
+	if (maxCh != 0) this->s = range / maxCh;
+	else { 
+		this->h = -1;
+		this->s = 0;
+		return *this;    
+	}
 	
 
-	if (maxCh == nr) (ng - nb) / range;
-	else if (maxCh == ng) h = 2 + (nb - ng) / range;	
-	else h = 4 + (nr - ng) / range;
+	if (maxCh == nr) this->h = (ng - nb) / range;
+	else if (maxCh == ng) this->h = 2 + (nb - ng) / range;    
+	else this->h = 4 + (nr - ng) / range;
 	
-	h *= 60.0f;
-	if (h < 0) h += 360;
+	this->h *= 60.0f;
+	if (this->h < 0) this->h += 360;
+	
+	this->isRGB = false;
 
-	return std::make_tuple(h, s, v);
+	return *this;
 }
 
-Color Color::HSVtoRBG(float h, float s, float v) {
-	float r, b, g;
+Color& Color::RGB() {
 
-	int sector = static_cast<int>(h / 60) % 6;
-	float sectorFrac = (h / 60) - sector;
-	float p = v * (1 - s);
-	float q = v * (1 - sectorFrac * s);
-	float t = v * ( 1 - (1 - sectorFrac) * s);
+	if (this->isRGB) return *this;
 
-	switch (sector) {
-		case 0:
-			r = v;
-			g = t;
-			b = p;
-			break;
-		case 1:
-			r = q;
-			g = v;
-			b = p;
-			break;
-		case 2:
-			r = p;
-			g = v;
-			b = t;
-			break;
-		case 3:
-			r = p;
-			g = q;
-			b = v;
-			break;
-		case 4:
-			r = t;
-			g = p;
-			b = v;
-			break;
-		case 5:
-			r = v;
-			g = p;
-			b = q;
-			break;
+	float fR, fG, fB;
+
+	float fC = this->v * this->s;
+	float fHPrime = std::fmod(this->h / 60.0, 6);
+	float fX = fC * (1 - std::fabs(std::fmod(fHPrime, 2) - 1));
+	float fM = this->v - fC;
+	
+	if(0 <= fHPrime && fHPrime < 1) {
+		fR = fC;
+		fG = fX;
+		fB = 0;
+	} else if(1 <= fHPrime && fHPrime < 2) {
+		fR = fX;
+		fG = fC;
+		fB = 0;
+	} else if(2 <= fHPrime && fHPrime < 3) {
+		fR = 0;
+		fG = fC;
+		fB = fX;
+	} else if(3 <= fHPrime && fHPrime < 4) {
+		fR = 0;
+		fG = fX;
+		fB = fC;
+	} else if(4 <= fHPrime && fHPrime < 5) {
+		fR = fX;
+		fG = 0;
+		fB = fC;
+	} else if(5 <= fHPrime && fHPrime < 6) {
+		fR = fC;
+		fG = 0;
+		fB = fX;
+	} else {
+		fR = 0;
+		fG = 0;
+		fB = 0;
 	}
+  
+	fR += fM;
+	fG += fM;
+	fB += fM; 
 
-	std::uint8_t ir = static_cast<std::uint8_t>(r * 255);
-	std::uint8_t ig = static_cast<std::uint8_t>(g * 255);
-	std::uint8_t ib = static_cast<std::uint8_t>(b * 255);
+	this->r = std::round(fR * 255.0);
+	this->g = std::round(fG * 255.0);
+	this->b = std::round(fB * 255.0);
 
-	return Color(ir, ig, ib);
+	this->isRGB = true;
+
+	return *this;
 }
