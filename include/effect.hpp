@@ -32,7 +32,7 @@ struct FadeOutEffect : Effect {
 	Color getColor(const Key& key, const Theme& theme) override;
 private:
 	std::array<double, 128> m_keys;
-	double m_releaseRate = 0.55;
+	double m_releaseRate = 1.2;
 };
 
 struct RainbowEffect : Effect {
@@ -47,6 +47,7 @@ inline std::unique_ptr<Effect> createEffect(int id) {
 	switch (id) {
 	case 0: return std::make_unique<DefaultEffect>();
 	case 1: return std::make_unique<FadeOutEffect>();
+	case 2: return std::make_unique<RainbowEffect>();
 	default: return std::make_unique<DefaultEffect>();
 	}
 }

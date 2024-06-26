@@ -21,6 +21,8 @@ public:
 	Piano(const Piano&) = delete;
 	Piano& operator=(const Piano&) = delete;
 
+	void setEffect(int e);
+
 private:
 	Key m_keys[128];
 	std::map<int, int> m_keyToLED;    

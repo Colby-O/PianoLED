@@ -25,6 +25,10 @@ Piano::Piano() :
 
 Piano::~Piano() {}
 
+void Piano::setEffect(int e) {
+	m_effect = createEffect(e);
+}
+
 void Piano::updateKeyState(int key, int vel, bool isPressed) {
 	m_keys[key].hasChanged = isPressed != m_keys[key].isPressed;
 	m_keys[key].isPressed = isPressed;
