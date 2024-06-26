@@ -7,7 +7,7 @@
 Piano::Piano() : 
 	strip(new NeoPixel(288)), 
 	m_keyToLED(Music::generateKeyMap()),
-	m_effect(new FadeOutEffect())
+	m_effect(new RainbowEffect())
 {
 	strip->setBrightness(0.5);
 

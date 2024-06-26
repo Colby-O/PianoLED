@@ -40,7 +40,7 @@ struct RainbowEffect : Effect {
 	Color getColor(const Key& key, const Theme& theme) override;
 private:
 	double m_rot = 0;
-	double m_rotRate = 4.0;
+	double m_rotRate = 0.5;
 };
 
 inline std::unique_ptr<Effect> createEffect(int id) {

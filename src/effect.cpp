@@ -55,7 +55,7 @@ Color RainbowEffect::getColor(const Key& key, const Theme& theme) {
 	m_rot += Time::deltaTime * m_rotRate;
 	return Color(
 		true,
-		std::fmod((double)key.id * (88.0 / 360.0) * m_rotRate + m_rot, 360.0),
+		std::fmod((double)key.id * (360.0 / 88.0) * m_rotRate + m_rot, 360.0),
 		1,
 		0.15
 	);
